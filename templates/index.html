@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <h1>My Habits</h1>
+    <p>{{ today }}</p>
+</div>
+
+{% if habit_stats %}
+    <div class="stats-summary">
+        <div class="stat-card">
+            <h3>{{ habit_stats|length }}</h3>
+            <p>Total Habits</p>
+        </div>
+        <div class="stat-card">
+            <h3>{{ habit_stats|selectattr('completed_today')|list|length }}</h3>
+            <p>Completed Today</p>
+        </div>
+    </div>
+
+    <div class="habits-grid">
+        {% for stat in habit_stats %}
+        <div class="habit-card" style="border-left: 4px solid {{ stat.habit.color }}">
+            <div class="habit-header">
+                <div class="habit-info">
+                    <h3>{{ stat.habit.name }}</h3>
+                    {% if stat.habit.description %}
+                        <p class="habit-description">{{ stat.habit.description }}</p>
+                    {% endif %}
+                    <span class="badge badge-frequency">{{ stat.habit.frequency }}</span>
+                </div>
+                <div class="habit-actions">
+                    <button class="btn-toggle" onclick="toggleHabit({{ stat.habit.id }})">
+                        {% if stat.completed_today %}✅{% else %}⭕{% endif %}
+                    </button>
+                </div>
+            </div>
+            
+            <div class="habit-stats">
+                <div class="streak-info">
+                    <div class="streak-current">
+                        <span class="streak-emoji">🔥</span>
+                        <span class="streak-count">{{ stat.current_streak }}</span>
+                        <span class="streak-label">Current Streak</span>
+                    </div>
+                    <div class="streak-longest">
+                        <span class="streak-emoji">🏆</span>
+                        <span class="streak-count">{{ stat.longest_streak }}</span>
+                        <span class="streak-label">Best Streak</span>
+                    </div>
+                </div>
+                <p>Total completions: {{ stat.total_completions }}</p>
+                <button class="btn-delete" onclick="deleteHabit({{ stat.habit.id }})">🗑️ Delete</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <h2>No habits yet!</h2>
+        <p>Start tracking your habits to build better routines.</p>
+        <a href="/add_habit" class="btn btn-primary">Add Your First Habit</a>
+    </div>
+{% endif %}
+{% endblock %}
