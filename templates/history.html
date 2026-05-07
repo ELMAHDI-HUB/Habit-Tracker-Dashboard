@@ -4,7 +4,7 @@
 {% block content %}
 <div class="history-header">
     <h1>Habit History</h1>
-    <p class="text-muted">Last 30 days of your habit tracking</p>
+    <p>Last 30 days of your habit tracking</p>
 </div>
 
 {% if habits %}
@@ -14,16 +14,14 @@
             <h3 style="color: {{ habit.color }}">{{ habit.name }}</h3>
             <div class="calendar-grid">
                 {% for i in range(30) %}
-                    {% set date = (end_date - timedelta(days=29-i)).strftime('%Y-%m-%d') %}
-                    {% set completed = false %}
-                    {% for log in logs %}
-                        {% if log.habit_id == habit.id and log.completed_at == date %}
-                            {% set completed = true %}
-                        {% endif %}
-                    {% endfor %}
-                    <div class="calendar-day {{ 'completed' if completed else '' }}"
-                         title="{{ date }}">
-                        {{ (end_date - timedelta(days=29-i)).day }}
+                    <div class="calendar-day 
+                        {% for log in logs %}
+                            {% if log.habit_id == habit.id and log.completed_at == today %}
+                                completed
+                            {% endif %}
+                        {% endfor %}
+                    " title="Day {{ i+1 }}">
+                        {{ i+1 }}
                     </div>
                 {% endfor %}
             </div>
@@ -32,7 +30,8 @@
     </div>
 {% else %}
     <div class="empty-state">
-        <p>No habits to show history for. Start by adding some habits!</p>
+        <h2>No habits to show!</h2>
+        <p>Start by adding some habits first.</p>
         <a href="/add_habit" class="btn btn-primary">Add Your First Habit</a>
     </div>
 {% endif %}
