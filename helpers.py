@@ -1,6 +1,4 @@
 import os
-import requests
-import urllib.parse
 from functools import wraps
 from flask import redirect, session
 from datetime import datetime, timedelta
@@ -32,10 +30,12 @@ def get_month_dates():
 
 def calculate_streaks(db, habit_id, user_id):
     """Calculate current and longest streak for a habit."""
-    logs = db.execute(
+    cursor = db.cursor()
+    cursor.execute(
         "SELECT completed_at FROM habit_logs WHERE habit_id = ? AND user_id = ? ORDER BY completed_at DESC",
-        habit_id, user_id
-    ).fetchall()
+        (habit_id, user_id)
+    )
+    logs = cursor.fetchall()
     
     if not logs:
         return 0, 0
